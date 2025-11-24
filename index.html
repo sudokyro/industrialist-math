@@ -3,41 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrialist Game Math Compendium</title>
-    
-    <!-- 1. Configure MathJax to recognize single '$' for inline math -->
+    <title>Industrialist OS v2.0</title>
     <script>
         window.MathJax = {
             tex: {
                 inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']]
             },
-            svg: {
-                fontCache: 'global'
-            }
+            svg: { fontCache: 'global' }
         };
     </script>
-    <!-- 2. Load MathJax -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
-            --bg-dark: #121212;
-            --bg-card: #1e1e1e;
-            --accent: #ffa500; /* Industrial Orange */
-            --text-main: #e0e0e0;
-            --text-dim: #a0a0a0;
-            --border: #333;
+            --bg-dark: #0f0f13;
+            --bg-sidebar: #16161e;
+            --bg-card: #1e1e26;
+            --bg-input: #2a2a35;
+            --accent: #ff9f1c;
+            --accent-glow: rgba(255, 159, 28, 0.3);
+            --text-main: #ecf0f1;
+            --text-dim: #95a5a6;
+            --border: #333340;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --info: #3498db;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-dark); }
+        
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, monospace;
             background-color: var(--bg-dark);
             color: var(--text-main);
             display: flex;
@@ -45,73 +43,98 @@
             overflow: hidden;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar */
         .sidebar {
-            width: 260px;
-            background-color: #0a0a0a;
+            width: 280px;
+            background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             padding: 20px;
-            flex-shrink: 0;
+            z-index: 10;
+            transition: width 0.3s;
         }
 
         .brand {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 900;
             color: var(--accent);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .search-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 10px;
+            color: white;
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        .search-box:focus { outline: 1px solid var(--accent); }
 
         .nav-btn {
             background: none;
             border: none;
             color: var(--text-dim);
             text-align: left;
-            padding: 15px;
+            padding: 12px 15px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-            margin-bottom: 5px;
-            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border-left: 2px solid transparent;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+        .nav-btn:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        .nav-btn.active { color: var(--accent); background-color: rgba(255, 159, 28, 0.08); border-left: 2px solid var(--accent); }
+
+        .system-stats {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-dim);
         }
 
-        .nav-btn:hover {
-            color: var(--text-main);
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-btn.active {
-            color: var(--accent);
-            background-color: rgba(255, 165, 0, 0.1);
-            border-left: 3px solid var(--accent);
-        }
-
-        /* Main Content Area */
+        /* Main Content */
         .main-content {
             flex: 1;
             overflow-y: auto;
-            padding: 40px;
+            padding: 30px;
             position: relative;
         }
 
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: var(--accent);
+        .section-content { display: none; animation: slideIn 0.3s ease-out; }
+        .section-content.active { display: block; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
+            padding-bottom: 15px;
         }
+
+        .section-title { font-size: 2.2rem; color: var(--text-main); font-weight: 300; }
+        .section-title span { color: var(--accent); font-weight: bold; }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            padding-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            padding-bottom: 50px;
         }
 
         /* Cards */
@@ -119,352 +142,422 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
+            padding: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
         }
         
-        .card:hover {
-            border-color: #444;
+        .card-header {
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .card h3 {
-            margin-bottom: 15px;
-            color: #fff;
-            font-size: 1.3rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 12px;
-        }
+        .card-header h3 { color: #fff; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .card-body { padding: 20px; flex: 1; }
 
         .formula-box {
             background-color: #000;
             padding: 15px;
-            border-radius: 6px;
+            border-radius: 4px;
             margin: 15px 0;
             text-align: center;
             border: 1px solid #333;
-            overflow-x: auto;
-        }
-
-        .text-content {
-            line-height: 1.7;
-            font-size: 0.95rem;
-            color: var(--text-dim);
-        }
-
-        /* Tables within cards */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #333;
-        }
-
-        th {
+            font-family: monospace;
             color: var(--accent);
-            font-weight: 600;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        /* Interactive Elements */
+        .interactive-panel {
+            background: rgba(0,0,0,0.3);
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
 
-        /* Tags */
-        .tag {
-            display: inline-block;
-            padding: 4px 8px;
-            font-size: 0.75rem;
+        .input-group { margin-bottom: 10px; }
+        .input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
+        
+        input[type="number"], input[type="text"] {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 8px;
+            width: 100%;
             border-radius: 4px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .tag.known { background-color: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
-        .tag.partial { background-color: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
-        .tag.unknown { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
-
-        /* Tab Content Visibility */
-        .section-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
         }
         
-        .section-content.active {
-            display: block;
+        input[type="range"] { width: 100%; accent-color: var(--accent); margin: 10px 0; }
+
+        .result-display {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--success);
+            margin-top: 10px;
+            text-align: right;
+            font-weight: bold;
+        }
+        .result-display.bad { color: var(--danger); }
+
+        /* Utilities */
+        .tag { padding: 3px 8px; font-size: 0.7rem; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+        .tag.known { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; }
+        .tag.partial { background: rgba(241, 196, 15, 0.1); color: #f1c40f; border: 1px solid #f1c40f; }
+        .tag.interactive { background: rgba(52, 152, 219, 0.1); color: #3498db; border: 1px solid #3498db; }
+
+        /* Specific Visualization Canvas */
+        canvas.sim-canvas {
+            width: 100%;
+            height: 150px;
+            background: #111;
+            border-radius: 4px;
+            border: 1px solid #333;
+            cursor: crosshair;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* Mini-Game: RS4 Logic */
+        .bit-grid { display: flex; gap: 5px; justify-content: center; margin: 10px 0; }
+        .bit { width: 30px; height: 30px; border: 1px solid #555; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; transition: 0.2s; font-family: monospace; }
+        .bit.on { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); border-color: var(--accent); }
 
-        /* Mobile Responsive */
-        @media(max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; height: auto; }
+        /* Notes System */
+        .user-notes {
+            margin-top: 15px;
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+        }
+        .user-notes textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 40px;
+            font-family: monospace;
+        }
+        .user-notes textarea:focus { outline: none; color: var(--text-main); }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--accent);
+            color: #000;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            right: 30px;
+            bottom: 30px;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        @media(max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
             .sidebar { width: 100%; height: auto; padding: 10px; }
-            .main-content { overflow-y: visible; padding: 20px; }
-            .nav-btn { padding: 10px; font-size: 0.9rem; }
+            .nav-btn { display: inline-flex; width: auto; border-radius: 20px; border: 1px solid var(--border); border-left: 1px solid var(--border); margin: 5px; }
+            .nav-btn.active { border-color: var(--accent); background: var(--accent); color: black; }
+            .main-content { overflow: visible; }
         }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="brand">Industrialist</div>
-        <!-- Added IDs to buttons for easier JS targeting if needed, but onclick passes 'this' -->
-        <button class="nav-btn active" onclick="switchTab(this, 'research')">Research Systems</button>
-        <button class="nav-btn" onclick="switchTab(this, 'power')">Power & Fluids</button>
-        <button class="nav-btn" onclick="switchTab(this, 'pollution')">Pollution & Ecology</button>
-        <button class="nav-btn" onclick="switchTab(this, 'economy')">Economy & Logistics</button>
-        <button class="nav-btn" onclick="switchTab(this, 'unknowns')">Unknowns & Misc</button>
+        <div class="brand">
+            <i class="fas fa-industry"></i> Ind.OS
+        </div>
+        <input type="text" id="globalSearch" class="search-box" placeholder="Search modules..." onkeyup="filterCards()">
+        
+        <button class="nav-btn active" onclick="switchTab(this, 'dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</button>
+        <button class="nav-btn" onclick="switchTab(this, 'research')"><i class="fas fa-flask"></i> Research Ops</button>
+        <button class="nav-btn" onclick="switchTab(this, 'power')"><i class="fas fa-bolt"></i> Power Grid</button>
+        <button class="nav-btn" onclick="switchTab(this, 'pollution')"><i class="fas fa-smog"></i> Ecology</button>
+        <button class="nav-btn" onclick="switchTab(this, 'economy')"><i class="fas fa-coins"></i> Logistics</button>
+        <button class="nav-btn" onclick="switchTab(this, 'unknowns')"><i class="fas fa-box-open"></i> Black Box</button>
+
+        <div class="system-stats">
+            <div id="clock">00:00:00</div>
+            <div style="margin-top:5px;">System Status: <span style="color:var(--success)">ONLINE</span></div>
+            <button onclick="resetData()" style="background:none; border:none; color: #e74c3c; cursor:pointer; margin-top:10px; font-size:0.7rem;">[Reset Local Data]</button>
+        </div>
     </nav>
 
     <div class="main-content">
-        
-        <!-- RESEARCH SECTION -->
-        <div id="research" class="section-content active">
-            <h1 class="section-title">Research Stations (RS)</h1>
-            <div class="grid">
-                
-                <!-- RS1 Card -->
-                <div class="card">
-                    <h3>Research Station 1 (RS1)</h3>
-                    <span class="tag known">Fully Known</span>
-                    <div class="text-content">
-                        Base rate is 30 RP every 36.67s.
-                        <div class="formula-box">
-                            $$ Output = N_{RS1} \cdot 0.818 \cdot M(R) $$
-                        </div>
-                        <strong>Multiplier M(R) Table:</strong>
-                        <table>
-                            <tr><th>RP Stored (R)</th><th>Multiplier</th></tr>
-                            <tr><td>0 - 499</td><td>1.0</td></tr>
-                            <tr><td>500 - 1,199</td><td>0.9</td></tr>
-                            <tr><td>1,200 - 1,799</td><td>0.8</td></tr>
-                            <tr><td>1,800 - 2,199</td><td>0.7</td></tr>
-                            <tr><td>2,200 - 2,999</td><td>0.6</td></tr>
-                            <tr><td>3,000 - 4,999</td><td>0.5</td></tr>
-                            <tr><td>5,000 - 6,999</td><td>0.4</td></tr>
-                            <tr><td>7,000 - 11,999</td><td>0.2</td></tr>
-                            <tr><td>12,000+</td><td>0.1</td></tr>
-                        </table>
-                    </div>
-                </div>
 
-                <!-- RS2 Card -->
-                <div class="card">
-                    <h3>Research Station 2 (RS2)</h3>
-                    <span class="tag partial">Formulas Vary</span>
-                    <div class="text-content">
-                        Consumes solid items at 0.5 items/s. Let $n$ be the sum of research efficiency per item.
-                        <div class="formula-box">
-                            $$ RP/s = 2 \cdot n^{0.6} $$
-                        </div>
-                        <strong>Cap Formulas (Disputed):</strong><br>
-                        Logarithmic: $Cap = 2000 \cdot \log_2(m+1)$<br>
-                        Geometric: $Cap \approx 2000 \cdot 1.585^{(m-1)}$
-                        <br><br>
-                        <strong>Slowdown M2(R):</strong><br>
-                        Starts at 3.0 ($R<2000$), drops to 0.2 ($R \ge 30000$).
-                    </div>
-                </div>
-
-                <!-- RS3 & RS4 Card -->
-                <div class="card">
-                    <h3>RS3 & RS4 Mechanics</h3>
-                    <span class="tag partial">Partially Known</span>
-                    <div class="text-content">
-                        <strong>RS3:</strong> Dual-input (0.1 items/s per input). RP/s is proportional to item efficiency. Cap depends on input money value.<br><br>
-                        <strong>RS4:</strong> No direct RP output.
-                        <ul>
-                            <li>Attaches to RS3.</li>
-                            <li><strong>Power Draw:</strong> 5 MMF/s.</li>
-                            <li><strong>Cap Boost:</strong> $\approx +100,000$ per RS4.</li>
-                            <li><strong>Minigame:</strong> 4-bit adder loop. Max output $1111_2$ (15). Internal sum can reach 30.</li>
-                        </ul>
-                    </div>
-                </div>
+        <div id="dashboard" class="section-content active">
+            <div class="section-header">
+                <h1 class="section-title">Mission <span>Control</span></h1>
             </div>
-        </div>
-
-        <!-- POWER SECTION -->
-        <div id="power" class="section-content">
-            <h1 class="section-title">Power, Steam & Fluids</h1>
-            <div class="grid">
-                
-                <!-- Turbines -->
-                <div class="card">
-                    <h3>Turbines</h3>
-                    <span class="tag partial">Mixed Knowledge</span>
-                    <div class="text-content">
-                        <strong>Small Steam Turbine:</strong>
-                        <div class="formula-box">
-                            $$ Input: 0.3 L/s \text{ Steam} $$
-                            $$ Output: 1.95 \text{ kMF/s} $$
-                        </div>
-                        Notes: Constant output. Wastes steam $> 0.3 L/s$.<br><br>
-                        <strong>Large Turbine:</strong> Output $P(T)$ increases with steam temp. (Approx 350-410k MF/s @ 240°C).<br><br>
-                        <strong>Modular Turbine:</strong> Sync req: 3590-3610 RPM. Failure if $\Delta RPM > 5$.
-                    </div>
-                </div>
-
-                <!-- Steam Mechanics -->
-                <div class="card">
-                    <h3>Steam & Boilers</h3>
-                    <span class="tag known">Constants Known</span>
-                    <div class="text-content">
-                        <strong>Expansion Ratio:</strong> 1 Water : 30 Steam.<br>
-                        <strong>Thermal Loss:</strong> $-0.01^{\circ}C$ per pipe connection.<br>
-                        <strong>Liquid Boilers:</strong> Max Temp $105^{\circ}C$.
-                        <ul>
-                            <li>Req: 6.25 Oil Rigs for saturation.</li>
-                            <li>Req: 3.125 American Rigs for saturation.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Fluid Dynamics -->
-                <div class="card">
-                    <h3>Fluid Dynamics</h3>
-                    <span class="tag unknown">Internal Math Unknown</span>
-                    <div class="text-content">
-                        Exact L/s values per pipe tier are not published.
-                        <div class="formula-box">
-                            $$ Flow = C_{tier} \cdot f(Pressure, Temp) $$
-                        </div>
-                        Note: <i>Cooling, Condensers, and Flash Boilers operate on unknown internal rules.</i>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- POLLUTION SECTION -->
-        <div id="pollution" class="section-content">
-            <h1 class="section-title">Pollution & Ecology</h1>
-            <div class="grid">
-                
-                <!-- Scrubber Rates -->
-                <div class="card">
-                    <h3>Scrubbing Math</h3>
-                    <span class="tag known">Fully Known</span>
-                    <table>
-                        <tr><th>Method</th><th>Rate (/hour)</th></tr>
-                        <tr><td>Basic Scrubber</td><td>-3.24%</td></tr>
-                        <tr><td>Filtered Scrubber</td><td>-6.48%</td></tr>
-                        <tr><td>Tree Scrubber (0% Pol)</td><td>-3.88%</td></tr>
-                        <tr><td>Residue Recipes</td><td>+6.48%</td></tr>
-                    </table>
-                    <br>
-                    <small>Tree efficiency follows unknown function $f(P)$ at negative pollution.</small>
-                </div>
-
-                <!-- Generation -->
-                <div class="card">
-                    <h3>Generation & Total Rate</h3>
-                    <span class="tag known">Aggregate Formula</span>
-                    <div class="text-content">
-                        <strong>Machine Rates (Per Sale):</strong><br>
-                        Truck Depot: 0.0005%<br>
-                        Huge Depot: 0.006%<br>
-                        Large Liq. Depot: 0.01%<br>
-                        <div class="formula-box" style="font-size: 0.8em;">
-                            $$ \frac{dP}{dt} = \sum P_{mach} + 6.48 N_{res} - 3.24 N_{scrub} - 6.48 N_{filt} - 3.88 f(P) N_{tree} $$
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ECONOMY SECTION -->
-        <div id="economy" class="section-content">
-            <h1 class="section-title">Economy & Logistics</h1>
-            <div class="grid">
-                
-                <!-- Money Math -->
-                <div class="card">
-                    <h3>Money Modifiers</h3>
-                    <span class="tag partial">Partially Known</span>
-                    <div class="text-content">
-                        Prices fluctuate based on pollution level $P$.
-                        <div class="formula-box">
-                            $$ Price(P) = BasePrice \cdot f(P) $$
-                        </div>
-                        <strong>Sample Point:</strong> At 100% Pollution, Coal drops from $5.2 to $4.3.
-                        $$ f(100\%) \approx 0.827 $$
-                    </div>
-                </div>
-
-                <!-- Depots -->
-                <div class="card">
-                    <h3>Depot Throughput</h3>
-                    <span class="tag known">Fully Known</span>
-                    <table>
-                        <tr><th>Depot Type</th><th>Batch</th><th>Rate (calc)</th></tr>
-                        <tr><td>Truck Depot</td><td>10 items / 15s</td><td>0.667 items/s</td></tr>
-                        <tr><td>Huge Depot</td><td>400 items / 80s</td><td>5 items/s</td></tr>
-                        <tr><td>Liquid Depot</td><td>4000 L / 80s</td><td>50 L/s</td></tr>
-                    </table>
-                    <div class="formula-box">
-                        $$ Earning = Throughput \cdot Price(P) $$
-                    </div>
-                </div>
-
-                <!-- Crafting -->
-                <div class="card">
-                    <h3>Production Logic</h3>
-                    <span class="tag known">Standard Logic</span>
-                    <div class="text-content">
-                        <strong>Items Per Second (IPS):</strong>
-                        $$ IPS = N_{mach} \cdot \frac{Output}{Time} $$
-                        <strong>Bottleneck:</strong>
-                        $$ Throughput = \min(IPS_{stage1}, IPS_{stage2}, ...) $$
-                        <strong>Balancing Vectors:</strong>
-                        $$ R_{total} = \sum n_i \cdot [Inputs/s, Outputs/s] $$
-                    </div>
-                </div>
-
-                <!-- Mining -->
-                <div class="card">
-                    <h3>Mining & Belts</h3>
-                    <span class="tag partial">Generic Logic</span>
-                    <div class="text-content">
-                        <strong>Ore Extraction:</strong>
-                        $$ \frac{Ore}{s} = \frac{Yield}{Cycle} \cdot Drills \cdot (1+Bonus) $$
-                        <strong>Belt/Transport:</strong>
-                        $$ \frac{Items}{s} = Speed \cdot Density $$
-                        <small>Specific belt speed values are not numerically documented.</small>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-           <!-- UNKNOWNS SECTION -->
-           <div id="unknowns" class="section-content">
-            <h1 class="section-title">Black Box / Unknowns</h1>
             <div class="grid">
                 <div class="card" style="grid-column: span 2;">
-                    <h3>The "Unknown" List</h3>
-                    <span class="tag unknown">Hidden Mechanics</span>
-                    <div class="text-content">
-                        While the wiki documents the formulas in the other tabs, the following systems operate on internally coded behaviors that are not publicly available:
-                        <ul style="margin-left: 20px; margin-top: 10px;">
-                            <li><strong>Terrain Generation:</strong> Noise functions and seed logic.</li>
-                            <li><strong>Precise Thermal Exchange:</strong> Boiler internal temp-transfer formulas.</li>
-                            <li><strong>Detailed Curves:</strong> Large Steam Turbine exact $P(T)$ function.</li>
-                            <li><strong>Core Logic:</strong> Pathfinding cost functions, UI smoothing, Per-tick integer rounding.</li>
-                            <li><strong>Depot Batching:</strong> Exact logic for batch grouping.</li>
-                            <li><strong>RS4 Physics:</strong> The exact formula for how minigames boost Cap.</li>
-                        </ul>
+                    <div class="card-header"><h3><i class="fas fa-sticky-note"></i> Quick Scratchpad</h3></div>
+                    <div class="card-body">
+                        <textarea id="globalNotes" style="width:100%; height:100px; background:var(--bg-input); border:none; color:white; padding:10px;" placeholder="Type global strategy notes here..."></textarea>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-calculator"></i> Unit Converter</h3></div>
+                    <div class="card-body">
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Items Per Second</label>
+                                <input type="number" id="convIPS" oninput="convertUnits('ips')">
+                            </div>
+                            <div class="input-group">
+                                <label>Items Per Hour</label>
+                                <input type="number" id="convIPH" oninput="convertUnits('iph')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="research" class="section-content">
+            <div class="section-header">
+                <h1 class="section-title">Research <span>Systems</span></h1>
+            </div>
+            <div class="grid">
+                
+                <div class="card" data-keywords="rs1 research station 1 multiplier">
+                    <div class="card-header">
+                        <h3>RS1 Optimization</h3>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="formula-box">$$ Output = N \cdot 0.818 \cdot M(R) $$</div>
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Number of Stations (N)</label>
+                                <input type="number" id="rs1_n" value="1" min="1" oninput="calcRS1()">
+                            </div>
+                            <div class="input-group">
+                                <label>Current RP Stored (R): <span id="rs1_r_val" style="color:var(--accent)">0</span></label>
+                                <input type="range" id="rs1_r" min="0" max="15000" value="0" step="100" oninput="calcRS1()">
+                            </div>
+                            <div class="result-display" id="rs1_out">0.818 RP/s</div>
+                            <svg id="rs1_chart" width="100%" height="60" style="border-bottom: 1px solid #444; margin-top:10px;"></svg>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Add RS1 notes..." data-id="note_rs1"></textarea></div>
+                    </div>
+                </div>
+
+                <div class="card" data-keywords="rs2 research station 2 efficiency">
+                    <div class="card-header">
+                        <h3>RS2 Efficiency Calc</h3>
+                        <span class="tag interactive">Interactive</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="formula-box">$$ RP/s = 2 \cdot n^{0.6} $$</div>
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Total Item Efficiency Sum (n)</label>
+                                <input type="number" id="rs2_n" value="10" oninput="calcRS2()">
+                            </div>
+                            <div class="result-display" id="rs2_out">7.96 RP/s</div>
+                            <div style="font-size:0.8rem; color:#777; margin-top:5px;">
+                                Cap Check: <span id="rs2_cap">Calculating...</span>
+                            </div>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Add RS2 notes..." data-id="note_rs2"></textarea></div>
+                    </div>
+                </div>
+
+                <div class="card" data-keywords="rs4 logic adder binary minigame">
+                    <div class="card-header">
+                        <h3>RS4 Adder Minigame</h3>
+                        <span class="tag interactive">Simulation</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Click bits to toggle input. Goal: Maximize Sum.</p>
+                        <div class="interactive-panel" style="text-align: center;">
+                            <div style="display:flex; justify-content:space-between; padding:0 20px;">
+                                <div>
+                                    <small>Input A</small>
+                                    <div class="bit-grid" id="inputA">
+                                        <div class="bit" onclick="toggleBit(this, 3)">8</div>
+                                        <div class="bit" onclick="toggleBit(this, 2)">4</div>
+                                        <div class="bit" onclick="toggleBit(this, 1)">2</div>
+                                        <div class="bit" onclick="toggleBit(this, 0)">1</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="border-top:1px solid #555; margin:10px 0;"></div>
+                            <div class="result-display" id="adder_sum" style="text-align:center; font-size:1.5rem;">SUM: 0</div>
+                            <small id="adder_binary" style="font-family:monospace; color:var(--accent);">0000</small>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Add RS4 notes..." data-id="note_rs4"></textarea></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="power" class="section-content">
+            <div class="section-header">
+                <h1 class="section-title">Power <span>Grid</span></h1>
+            </div>
+            <div class="grid">
+                
+                <div class="card" data-keywords="turbine rpm steam minigame">
+                    <div class="card-header">
+                        <h3>Turbine RPM Syncer</h3>
+                        <span class="tag interactive">Mini-Game</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:0.8rem; margin-bottom:10px;">Click canvas to boost RPM. Keep inside the Green Zone (3590-3610).</p>
+                        <canvas id="rpmCanvas" class="sim-canvas"></canvas>
+                        <div class="interactive-panel">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>RPM: <b id="rpmDisplay">0</b></span>
+                                <span id="rpmStatus">OFFLINE</span>
+                            </div>
+                            <button onclick="startTurbineGame()" style="width:100%; margin-top:5px; background:var(--accent); border:none; padding:5px; cursor:pointer;">Start / Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-keywords="steam boiler water ratio">
+                    <div class="card-header">
+                        <h3>Steam Calculator</h3>
+                        <span class="tag known">Math</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="formula-box">1 Water : 30 Steam</div>
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Water Input (L/s)</label>
+                                <input type="number" id="water_in" value="1" oninput="calcSteam()">
+                            </div>
+                            <div class="result-display" id="steam_out">30 L/s Steam</div>
+                            <div class="result-display" style="font-size:0.9rem; color:var(--text-dim);" id="turbine_support">Supports: 100 Small Turbines</div>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Boiler layout notes..." data-id="note_steam"></textarea></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="pollution" class="section-content">
+            <div class="section-header">
+                <h1 class="section-title">Eco <span>Systems</span></h1>
+            </div>
+            <div class="grid">
+                
+                <div class="card" data-keywords="pollution scrubber tree balance">
+                    <div class="card-header">
+                        <h3>Net Pollution Calculator</h3>
+                        <span class="tag interactive">Planner</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="formula-box">$$ \Delta P = Gen - Scrub $$</div>
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Truck Depots (Gen: 0.0005)</label>
+                                <input type="number" id="pol_trucks" value="0" oninput="calcPollution()">
+                            </div>
+                            <div class="input-group">
+                                <label>Basic Scrubbers (Rem: 3.24)</label>
+                                <input type="number" id="pol_scrub" value="0" oninput="calcPollution()">
+                            </div>
+                            <div class="input-group">
+                                <label>Filtered Scrubbers (Rem: 6.48)</label>
+                                <input type="number" id="pol_filt" value="0" oninput="calcPollution()">
+                            </div>
+                            <div class="result-display" id="pol_result">0.0000 %/hr</div>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Ecology notes..." data-id="note_eco"></textarea></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="economy" class="section-content">
+            <div class="section-header">
+                <h1 class="section-title">Logistics <span>& Trade</span></h1>
+            </div>
+            <div class="grid">
+                
+                <div class="card" data-keywords="bottleneck throughput ips">
+                    <div class="card-header">
+                        <h3>Bottleneck Detector</h3>
+                        <span class="tag interactive">Tool</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Stage 1 Speed (Extraction)</label>
+                                <input type="number" id="bn_1" oninput="calcBottleneck()">
+                            </div>
+                            <div class="input-group">
+                                <label>Stage 2 Speed (Processing)</label>
+                                <input type="number" id="bn_2" oninput="calcBottleneck()">
+                            </div>
+                            <div class="input-group">
+                                <label>Stage 3 Speed (Transport)</label>
+                                <input type="number" id="bn_3" oninput="calcBottleneck()">
+                            </div>
+                            <div class="result-display" id="bn_res" style="font-size:0.9rem;">Waiting for input...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-keywords="money price pollution">
+                    <div class="card-header">
+                        <h3>Pollution Price Impact</h3>
+                        <span class="tag partial">Estimator</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="formula-box">$$ Price \approx Base \cdot f(P) $$</div>
+                        <div class="interactive-panel">
+                            <div class="input-group">
+                                <label>Base Item Price ($)</label>
+                                <input type="number" id="price_base" value="100" oninput="calcPrice()">
+                            </div>
+                            <div class="input-group">
+                                <label>Global Pollution %</label>
+                                <input type="range" id="price_pol" min="0" max="100" value="0" oninput="calcPrice()">
+                                <div style="text-align:right; font-size:0.8rem" id="price_pol_disp">0%</div>
+                            </div>
+                            <div class="result-display" id="price_res">$100.00</div>
+                        </div>
+                        <div class="user-notes"><textarea placeholder="Market notes..." data-id="note_market"></textarea></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="unknowns" class="section-content">
+            <div class="section-header">
+                <h1 class="section-title">Black <span>Box</span></h1>
+            </div>
+            <div class="grid">
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header"><h3><i class="fas fa-user-secret"></i> Theorycrafting Board</h3></div>
+                    <div class="card-body">
+                        <p>Use this space to document behavior of undocumented mechanics.</p>
+                        <div class="user-notes">
+                            <textarea style="height: 300px;" placeholder="Log observations about noise functions, terrain generation, or boiler internal temps here..." data-id="note_blackbox"></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -472,25 +565,307 @@
 
     </div>
 
+    <div id="toast">Settings Saved</div>
+
     <script>
+        /* --- CORE SYSTEM --- */
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setInterval(updateClock, 1000);
+            drawRS1Chart();
+            
+            // Setup Auto-save on inputs
+            document.querySelectorAll('input, textarea').forEach(el => {
+                el.addEventListener('change', saveData);
+            });
+        });
+
         function switchTab(btn, sectionId) {
-            // 1. Remove active class from all buttons
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(b => b.classList.remove('active'));
-
-            // 2. Add active class to clicked button
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
 
-            // 3. Hide all sections
-            const sections = document.querySelectorAll('.section-content');
-            sections.forEach(sec => sec.classList.remove('active'));
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }
 
-            // 4. Show the target section
-            const target = document.getElementById(sectionId);
-            if (target) {
-                target.classList.add('active');
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.className = "show";
+            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+        }
+
+        /* --- PERSISTENCE --- */
+        function saveData() {
+            const data = {};
+            document.querySelectorAll('input, textarea').forEach(el => {
+                if(el.id || el.dataset.id) {
+                    const key = el.id || el.dataset.id;
+                    data[key] = el.value;
+                }
+            });
+            localStorage.setItem('industrialist_data', JSON.stringify(data));
+            showToast("System State Saved");
+        }
+
+        function loadData() {
+            const raw = localStorage.getItem('industrialist_data');
+            if(!raw) return;
+            const data = JSON.parse(raw);
+            for(const key in data) {
+                const el = document.getElementById(key) || document.querySelector(`[data-id="${key}"]`);
+                if(el) {
+                    el.value = data[key];
+                    // Trigger calculation updates
+                    el.dispatchEvent(new Event('input')); 
+                }
+            }
+            // Specific triggers for visuals
+            calcRS1();
+        }
+
+        function resetData() {
+            if(confirm("Factory Reset: Clear all saved data?")) {
+                localStorage.removeItem('industrialist_data');
+                location.reload();
             }
         }
+
+        /* --- SEARCH --- */
+        function filterCards() {
+            const term = document.getElementById('globalSearch').value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                const keys = (card.dataset.keywords || "") + " " + card.innerText;
+                if(keys.toLowerCase().includes(term)) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        /* --- CALCULATORS --- */
+
+        // RS1
+        function calcRS1() {
+            const n = parseFloat(document.getElementById('rs1_n').value) || 0;
+            const r = parseFloat(document.getElementById('rs1_r').value) || 0;
+            document.getElementById('rs1_r_val').innerText = r;
+
+            // Logic from original doc
+            let m = 1.0;
+            if (r >= 12000) m = 0.1;
+            else if (r >= 7000) m = 0.2;
+            else if (r >= 5000) m = 0.4;
+            else if (r >= 3000) m = 0.5;
+            else if (r >= 2200) m = 0.6;
+            else if (r >= 1800) m = 0.7;
+            else if (r >= 1200) m = 0.8;
+            else if (r >= 500) m = 0.9;
+
+            const out = n * 0.818 * m;
+            document.getElementById('rs1_out').innerText = out.toFixed(3) + " RP/s";
+            drawRS1Chart(r);
+        }
+
+        function drawRS1Chart(currentR = 0) {
+            // Simple SVG polyline render
+            const svg = document.getElementById('rs1_chart');
+            let points = "";
+            const width = svg.clientWidth;
+            const height = 60;
+            const maxR = 15000;
+            
+            // Generate points based on threshold steps
+            for(let x = 0; x <= width; x+=5) {
+                const rVal = (x / width) * maxR;
+                let m = 1.0;
+                if (rVal >= 12000) m = 0.1;
+                else if (rVal >= 7000) m = 0.2;
+                else if (rVal >= 5000) m = 0.4;
+                else if (rVal >= 3000) m = 0.5;
+                else if (rVal >= 2200) m = 0.6;
+                else if (rVal >= 1800) m = 0.7;
+                else if (rVal >= 1200) m = 0.8;
+                else if (rVal >= 500) m = 0.9;
+                
+                const y = height - (m * height); 
+                points += `${x},${y} `;
+            }
+            
+            // Indicator line
+            const cx = (currentR / maxR) * width;
+            
+            svg.innerHTML = `
+                <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+                <line x1="${cx}" y1="0" x2="${cx}" y2="${height}" stroke="#fff" stroke-dasharray="4" opacity="0.5"/>
+            `;
+        }
+
+        // RS2
+        function calcRS2() {
+            const n = parseFloat(document.getElementById('rs2_n').value) || 0;
+            const out = 2 * Math.pow(n, 0.6);
+            document.getElementById('rs2_out').innerText = out.toFixed(3) + " RP/s";
+            
+            // Cap estimations
+            const capLog = 2000 * Math.log2(n + 1);
+            document.getElementById('rs2_cap').innerText = `~${Math.floor(capLog)} RP Cap`;
+        }
+
+        // Steam
+        function calcSteam() {
+            const w = parseFloat(document.getElementById('water_in').value) || 0;
+            const s = w * 30;
+            document.getElementById('steam_out').innerText = s.toFixed(1) + " L/s Steam";
+            // Small turbine consumes 0.3
+            const turbs = Math.floor(s / 0.3);
+            document.getElementById('turbine_support').innerText = `Supports: ${turbs} Small Turbines`;
+        }
+
+        // Pollution
+        function calcPollution() {
+            const trucks = (parseFloat(document.getElementById('pol_trucks').value) || 0) * 0.0005;
+            const scrub = (parseFloat(document.getElementById('pol_scrub').value) || 0) * 3.24;
+            const filt = (parseFloat(document.getElementById('pol_filt').value) || 0) * 6.48;
+            
+            // Converting per hour to raw logic for display
+            const net = trucks - (scrub/100) - (filt/100); // rough approx for display logic
+            
+            const el = document.getElementById('pol_result');
+            el.innerText = (net > 0 ? "+" : "") + net.toFixed(4) + " factor";
+            el.className = "result-display " + (net > 0 ? "bad" : "");
+        }
+
+        // Economy
+        function calcPrice() {
+            const base = parseFloat(document.getElementById('price_base').value) || 0;
+            const pol = parseFloat(document.getElementById('price_pol').value) || 0;
+            document.getElementById('price_pol_disp').innerText = pol + "%";
+            
+            // Sample logic based on doc: 100% pol = ~0.827 multiplier
+            // Linear interpolation for estimation
+            const mult = 1 - (pol * (1 - 0.827) / 100);
+            
+            document.getElementById('price_res').innerText = "$" + (base * mult).toFixed(2);
+        }
+
+        function calcBottleneck() {
+            const v1 = parseFloat(document.getElementById('bn_1').value) || 99999;
+            const v2 = parseFloat(document.getElementById('bn_2').value) || 99999;
+            const v3 = parseFloat(document.getElementById('bn_3').value) || 99999;
+            
+            const min = Math.min(v1, v2, v3);
+            let msg = "";
+            if(min === 99999) msg = "Waiting...";
+            else if(min === v1) msg = "Extraction Limited";
+            else if(min === v2) msg = "Processing Limited";
+            else msg = "Transport Limited";
+            
+            const el = document.getElementById('bn_res');
+            el.innerText = `${msg} (Max: ${min}/s)`;
+            el.className = "result-display " + (min < 10 ? "bad" : "");
+        }
+
+        function convertUnits(dir) {
+            if(dir === 'ips') {
+                const val = parseFloat(document.getElementById('convIPS').value) || 0;
+                document.getElementById('convIPH').value = val * 3600;
+            } else {
+                const val = parseFloat(document.getElementById('convIPH').value) || 0;
+                document.getElementById('convIPS').value = (val / 3600).toFixed(4);
+            }
+        }
+
+        /* --- SIMULATIONS --- */
+
+        // RS4 Logic
+        let binaryState = [0,0,0,0]; // 8, 4, 2, 1
+        function toggleBit(el, idx) {
+            el.classList.toggle('on');
+            binaryState[idx] = el.classList.contains('on') ? 1 : 0;
+            
+            // Calc value
+            let val = (binaryState[3]*8) + (binaryState[2]*4) + (binaryState[1]*2) + (binaryState[0]*1);
+            
+            // RS4 "Loop" Logic: It adds to internal sum. 
+            // For this sim, we'll just show the binary sum.
+            document.getElementById('adder_sum').innerText = "SUM: " + val;
+            document.getElementById('adder_binary').innerText = binaryState.reverse().join("");
+            binaryState.reverse(); // flip back
+        }
+
+        // Turbine Mini-Game
+        let gameId = null;
+        let rpm = 0;
+        let targetMin = 3590;
+        let targetMax = 3610;
+        
+        function startTurbineGame() {
+            if(gameId) { cancelAnimationFrame(gameId); gameId = null; rpm = 0; updateRpmUI(); return; }
+            
+            rpm = 2000; // start low
+            gameLoop();
+        }
+
+        const cvs = document.getElementById('rpmCanvas');
+        const ctx = cvs.getContext('2d');
+        cvs.width = cvs.clientWidth;
+        cvs.height = 150;
+
+        cvs.addEventListener('mousedown', () => { rpm += 50; });
+
+        function gameLoop() {
+            // Physics
+            rpm -= 2; // decay
+            if(rpm < 0) rpm = 0;
+
+            // Render
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            
+            // Draw Scale
+            const minScale = 3000;
+            const maxScale = 4000;
+            const range = maxScale - minScale;
+            
+            // Safe Zone
+            const safeX = ((targetMin - minScale) / range) * cvs.width;
+            const safeW = ((targetMax - targetMin) / range) * cvs.width;
+            
+            ctx.fillStyle = "rgba(46, 204, 113, 0.3)";
+            ctx.fillRect(safeX, 0, safeW, cvs.height);
+            
+            // Needle
+            let curX = ((rpm - minScale) / range) * cvs.width;
+            if(curX < 0) curX = 0;
+            if(curX > cvs.width) curX = cvs.width;
+            
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(curX - 2, 0, 4, cvs.height);
+            
+            // Text
+            updateRpmUI();
+
+            gameId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateRpmUI() {
+            document.getElementById('rpmDisplay').innerText = Math.floor(rpm);
+            const status = document.getElementById('rpmStatus');
+            if(rpm >= targetMin && rpm <= targetMax) {
+                status.innerText = "SYNCED";
+                status.style.color = "var(--success)";
+            } else {
+                status.innerText = "UNSTABLE";
+                status.style.color = "var(--danger)";
+            }
+        }
+
     </script>
 </body>
 </html>
